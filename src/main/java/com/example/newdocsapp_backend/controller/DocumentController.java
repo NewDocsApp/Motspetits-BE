@@ -1,13 +1,12 @@
 package com.example.newdocsapp_backend.controller;
 
-import com.example.newdocsapp_backend.dto.DocumentRequest;
+import com.example.newdocsapp_backend.dto.request.DocumentRequest;
 import com.example.newdocsapp_backend.models.Document;
 import com.example.newdocsapp_backend.service.DocumentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 @RestController

@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DocumentCollaboratorRepository extends JpaRepository<DocumentCollaborator, DocumentCollaboratorId> {
-    List<DocumentCollaborator> findByDocumentById(UUID documentId);
+    List<DocumentCollaborator> findByDocumentId(UUID documentId);
     DocumentCollaborator findDocumentCollaboratorByDocumentIdAndUserId(UUID documentId, UUID userId);
 }

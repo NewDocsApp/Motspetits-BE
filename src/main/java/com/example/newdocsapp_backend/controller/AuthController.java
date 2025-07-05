@@ -1,7 +1,8 @@
 package com.example.newdocsapp_backend.controller;
 
-import com.example.newdocsapp_backend.dto.LoginRequest;
-import com.example.newdocsapp_backend.dto.RegisterRequest;
+import com.example.newdocsapp_backend.dto.request.LoginRequest;
+import com.example.newdocsapp_backend.dto.request.RegisterRequest;
+import com.example.newdocsapp_backend.dto.response.AuthResponse;
 import com.example.newdocsapp_backend.models.User;
 import com.example.newdocsapp_backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -33,19 +34,55 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
+        authService.verifyOtp(verifyOtpRequest.getOtp(), verifyOtpRequest.getPurpose());
+        return ResponseEntity.ok("OTP VERIFIED");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        String token = authService.login(
+        AuthResponse reponse = authService.login(
                 request.getEmail(),
                 request.getPassword()
         );
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(reponse);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.ok("logout oke!");
+    public ResponseEntity<String> logout(@RequestBody String token) {
+        authService.logout(token);
+        return ResponseEntity.ok("Logged out successfully");
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+        authService.requestPasswordReset(email);
+        return ResponseEntity.ok("OTP sent!");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        authService.resetPassword(resetPasswordRequest.getOtp(), resetPasswordRequest.getNewPassword());
+        return ResponseEntity.ok("Password reset successfully");
+    }
+}
+
+class VerifyOtpRequest {
+    private String otp;
+    private String purpose;
+
+    public String getOtp() { return otp; }
+    public void setOtp(String otp) { this.otp = otp; }
+    public String getPurpose() { return purpose; }
+    public void setPurpose(String purpose) { this.purpose = purpose; }
+}
+
+class ResetPasswordRequest {
+    private String otp;
+    private String newPassword;
+    public String getOtp() { return otp; }
+    public void setOtp(String otp) { this.otp = otp; }
+    public String getNewPassword() { return newPassword; }
+    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
 }

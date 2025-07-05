@@ -1,4 +1,4 @@
-package com.example.newdocsapp_backend.dto;
+package com.example.newdocsapp_backend.dto.request;
 
 import com.example.newdocsapp_backend.models.User;
 

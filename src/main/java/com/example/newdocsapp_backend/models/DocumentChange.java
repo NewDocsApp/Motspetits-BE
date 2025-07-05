@@ -9,7 +9,7 @@ import java.util.UUID;
 @Table(name = "document_changes")
 public class DocumentChange {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "UUID")
     private UUID id;
 

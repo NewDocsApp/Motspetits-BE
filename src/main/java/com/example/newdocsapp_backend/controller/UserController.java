@@ -1,11 +1,9 @@
 package com.example.newdocsapp_backend.controller;
 
 
-import com.example.newdocsapp_backend.dto.UserRequest;
+import com.example.newdocsapp_backend.dto.request.UserRequest;
 import com.example.newdocsapp_backend.models.User;
-import com.example.newdocsapp_backend.service.DocumentService;
 import com.example.newdocsapp_backend.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

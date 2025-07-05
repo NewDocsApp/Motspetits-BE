@@ -19,25 +19,32 @@ public class User {
     private String fullname;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
-    private String password_hash;
-    @Column
-    private LocalDateTime created_at;
+    @Column(name = "password_hash",nullable = false)
+    private String passwordHash;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified;
 
-    public User() {}
+    public User() {
+        this.createdAt = LocalDateTime.now();
+        this.isVerified = false;
+    }
 
     public User(String username, String fullname, String email) {
         this.username = username;
         this.fullname = fullname;
         this.email = email;
+
     }
 
     public User(String username, String fullname, String email, String password_hash) {
         this.username = username;
         this.fullname = fullname;
         this.email = email;
-        this.password_hash = password_hash;
-        this.created_at = LocalDateTime.now();
+        this.passwordHash = password_hash;
+        this.createdAt = LocalDateTime.now();
+        this.isVerified = false;
     }
 
     public UUID getId() {
@@ -62,12 +69,34 @@ public class User {
         this.fullname = fullname;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getEmail() {
         return email;
     }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+
 
 }

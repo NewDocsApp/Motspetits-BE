@@ -1,4 +1,4 @@
-package com.example.newdocsapp_backend.dto;
+package com.example.newdocsapp_backend.dto.request;
 
 public class UserRequest {
     private String fullname;

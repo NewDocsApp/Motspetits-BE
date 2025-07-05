@@ -17,20 +17,27 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
-    private long expiration;
+    @Value("${jwt.access.expiration}")
+    private long accessTokenExpiration;
 
-    public String generateToken(UUID userId, String email) {
+    @Value("${jwt.refresh.expiration}")
+    private long refreshTokenExpiration;
+
+    public String generateAccessToken(UUID userId, String email) {
         Date now =  new Date();
-        Date expirationDate = new Date(now.getTime() + expiration);
+        Date expirationDate = new Date(now.getTime() + accessTokenExpiration);
         // Tạo token từ id của users
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .claim("email", email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    public String generateRefreshToken(UUID userId, String email) {
+        return UUID.randomUUID().toString();
     }
 
     public Claims getClaimsFromToken(String token) {
