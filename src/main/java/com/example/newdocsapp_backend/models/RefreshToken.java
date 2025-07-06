@@ -3,6 +3,7 @@ package com.example.newdocsapp_backend.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "refresh_tokens")
@@ -17,11 +18,11 @@ public class RefreshToken {
     private User user;
 
     @Column(name = "expiry_date", nullable = false)
-    private LocalDateTime expiryDate;
+    private Date expiryDate;
 
     public RefreshToken() {}
 
-    public RefreshToken(String token, User user, LocalDateTime expiryDate) {
+    public RefreshToken(String token, User user,  Date expiryDate) {
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
@@ -41,10 +42,10 @@ public class RefreshToken {
         this.user = user;
     }
 
-    public LocalDateTime getExpiryDate() {
+    public Date getExpiryDate() {
         return expiryDate;
     }
-    public void setExpiryDate(LocalDateTime expiryDate) {
+    public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
 }

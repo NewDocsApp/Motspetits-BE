@@ -3,71 +3,65 @@ package com.example.newdocsapp_backend.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "document_collaborators")
 public class DocumentCollaborator {
-    @EmbeddedId
-    private DocumentCollaboratorId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "UUID")
+    private UUID id;
 
-    @ManyToOne
-    @MapsId("documentId")
-    @JoinColumn(name = "document_id")
-    private Document document;
+    @Column(name = "document_id")
+    private UUID documentId;
 
-    @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private UUID userId;
 
     @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "shared_at")
     private LocalDateTime sharedAt;
 
     public DocumentCollaborator() {
-        this.id = new DocumentCollaboratorId();
         this.sharedAt = LocalDateTime.now();
     }
 
-    public DocumentCollaborator(Document document, User user, String role) {
-        this.id = new DocumentCollaboratorId(document.getId(), user.getId());
-        this.document = document;
-        this.user = user;
+    public DocumentCollaborator(UUID document, UUID user, Role role) {
+        this.documentId = document;
+        this.userId = user;
         this.role = role;
         this.sharedAt = LocalDateTime.now();
     }
 
-    public DocumentCollaboratorId getId() {
+    public UUID getId() {
         return id;
     }
-    public void setId(DocumentCollaboratorId id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public Document getDocument() {
-        return document;
+    public UUID getDocument() {
+        return documentId;
     }
-    public void setDocument(Document document) {
-        this.document = document;
-        if(this.id == null) this.id = new DocumentCollaboratorId();
-        this.id.setDocumentId(document.getId());
+    public void setDocument(UUID document) {
+        this.documentId = document;
     }
 
-    public User getUser() {
-        return user;
+    public UUID getUser() {
+        return userId;
     }
-    public void setUser(User user) {
-        this.user = user;
-        if (this.id == null) this.id = new DocumentCollaboratorId();
-        this.id.setUserId(user.getId());
+    public void setUser(UUID user) {
+        this.userId = user;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -77,4 +71,7 @@ public class DocumentCollaborator {
     public void setSharedAt(LocalDateTime sharedAt) {
         this.sharedAt = sharedAt;
     }
+
+
 }
+

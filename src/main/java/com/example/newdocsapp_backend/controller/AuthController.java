@@ -5,6 +5,7 @@ import com.example.newdocsapp_backend.dto.request.RegisterRequest;
 import com.example.newdocsapp_backend.dto.response.AuthResponse;
 import com.example.newdocsapp_backend.models.User;
 import com.example.newdocsapp_backend.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,12 @@ public class AuthController {
     public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
         authService.verifyOtp(verifyOtpRequest.getOtp(), verifyOtpRequest.getPurpose());
         return ResponseEntity.ok("OTP VERIFIED");
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        String accessToken = authService.refreshAccessToken(request.getToken());
+        return ResponseEntity.ok(new AuthResponse(accessToken, request.getToken()));
     }
 
     @PostMapping("/login")
@@ -85,4 +92,10 @@ class ResetPasswordRequest {
     public void setOtp(String otp) { this.otp = otp; }
     public String getNewPassword() { return newPassword; }
     public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+}
+
+class RefreshRequest {
+    private String token;
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
 }

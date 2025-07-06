@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -33,6 +34,8 @@ public class AuthService {
     private final JavaMailSender mailSender;
     @Value("${otp.expiration}")
     private Long otpExpiration;
+    @Value("${jwt.refresh.expiration}")
+    private Long refreshTokenExpiration;
     public AuthService(UserRepository userRepository,
                        JwtUtil jwtUtil,
                        RefreshTokenRepository refreshTokenRepository,
@@ -92,8 +95,8 @@ public class AuthService {
 
         String accessToken = jwtUtil.generateAccessToken(user.getId(), user.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(user.getId(), user.getEmail());
-        LocalDateTime expiryDate = LocalDateTime.now();
-        RefreshToken token = new RefreshToken(refreshToken, user, expiryDate);
+        Date expiration = new Date(System.currentTimeMillis() + refreshTokenExpiration);
+        RefreshToken token = new RefreshToken(refreshToken, user, expiration);
         refreshTokenRepository.save(token);
 
         return new AuthResponse(accessToken, refreshToken);
@@ -101,8 +104,14 @@ public class AuthService {
 
     @Transactional
     public String refreshAccessToken(String refreshToken) {
+        logger.info("Refreshing access token for user {}", refreshToken);
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken);
-        if (token == null || token.getExpiryDate().isBefore(LocalDateTime.now())) {
+        if (token == null ) {
+            throw new IllegalArgumentException("No refresh token.");
+        }
+
+        if(token.getExpiryDate().before(new Date()))
+        {
             throw new IllegalArgumentException("Invalid refresh token.");
         }
 

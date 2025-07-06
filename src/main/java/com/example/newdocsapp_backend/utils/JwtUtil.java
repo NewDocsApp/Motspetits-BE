@@ -24,26 +24,33 @@ public class JwtUtil {
     private long refreshTokenExpiration;
 
     public String generateAccessToken(UUID userId, String email) {
-        Date now =  new Date();
-        Date expirationDate = new Date(now.getTime() + accessTokenExpiration);
         // Tạo token từ id của users
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .claim("email", email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public String generateRefreshToken(UUID userId, String email) {
-        return UUID.randomUUID().toString();
+        // Tạo token từ id của users
+        return Jwts.builder()
+                .setSubject(userId.toString())
+                .claim("email", email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     public Claims getClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public UUID getUserIdFromToken(String token) {
@@ -52,15 +59,21 @@ public class JwtUtil {
 
     public boolean validToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    private boolean isTokenExpired(String token) {
+    public String getEmailFromToken(String token) {
+        return getClaimsFromToken(token).get("email", String.class);
+    }
+
+    public boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());
     }
 

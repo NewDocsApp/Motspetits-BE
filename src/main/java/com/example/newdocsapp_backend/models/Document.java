@@ -1,6 +1,9 @@
 package com.example.newdocsapp_backend.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -9,29 +12,28 @@ import java.util.UUID;
 @Table(name = "documents")
 public class Document {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "UUID")
     private UUID id;
 
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @Column(name = "owner_id")
+    private UUID owner;
 
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String content;
 
-    @Column
-    private LocalDateTime created_at;
-    @Column
-    private LocalDateTime updated_at;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Document() {}
 
-    public Document(String title, User owner, String content) {
-        this.id = UUID.randomUUID();
+    public Document(String title, UUID owner, String content) {
         this.title = title;
         this.owner = owner;
         this.content = content;
@@ -50,10 +52,10 @@ public class Document {
         this.title = title;
     }
 
-    public User getOwner() {
+    public UUID getOwner() {
         return owner;
     }
-    public void setOwner(User owner) {
+    public void setOwner(UUID owner) {
         this.owner = owner;
     }
 
@@ -62,5 +64,19 @@ public class Document {
     }
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -1,9 +1,6 @@
 package com.example.newdocsapp_backend.controller;
 
-import com.example.newdocsapp_backend.models.Document;
-import com.example.newdocsapp_backend.models.DocumentChange;
-import com.example.newdocsapp_backend.models.DocumentCollaborator;
-import com.example.newdocsapp_backend.models.User;
+import com.example.newdocsapp_backend.models.*;
 import com.example.newdocsapp_backend.repository.DocumentChangeRepository;
 import com.example.newdocsapp_backend.repository.DocumentCollaboratorRepository;
 import com.example.newdocsapp_backend.repository.DocumentRepository;
@@ -44,8 +41,9 @@ public class WebSocketController {
         }
         UUID userId = jwtUtil.getUserIdFromToken(token);
 
-        DocumentCollaborator documentCollab = documentCollaboratorRepository.findDocumentCollaboratorByDocumentIdAndUserId(UUID.fromString(documentId.toString()), userId);
-        if(documentCollab == null || !"editor".equals(documentCollab.getRole()))
+        DocumentCollaborator documentCollab = documentCollaboratorRepository.findDocumentCollaboratorByDocumentIdAndUserId(UUID.fromString(documentId.toString()), userId)
+                .orElseThrow(() -> new SecurityException("Document not found"));
+        if(documentCollab.getRole() != Role.editor)
         {
             throw new SecurityException("User does not have edit permission");
         }
