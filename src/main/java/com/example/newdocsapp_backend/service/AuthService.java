@@ -72,6 +72,7 @@ public class AuthService {
 
     @Transactional
     public void verifyOtp(String otp, String purpose) {
+
         OTP otpVerification = otpRepository.findByOtpAndPurpose(otp, purpose);
         if(otpVerification == null)
         {
