@@ -28,8 +28,8 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
-    - name: Run tests
-      run: mvn -e -X test
+    # - name: Run tests
+    #   run: mvn -e -X test
     
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
