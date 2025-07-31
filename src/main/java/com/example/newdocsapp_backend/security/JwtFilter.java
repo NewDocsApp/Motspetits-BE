@@ -19,10 +19,15 @@ import java.util.UUID;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    @Autowired
+
     private JwtUtil jwtUtil;
 
+    public JwtFilter() {}
 
+    @Autowired // Thêm @Autowired vào constructor
+    public JwtFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {

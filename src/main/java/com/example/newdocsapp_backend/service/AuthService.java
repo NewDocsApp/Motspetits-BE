@@ -11,6 +11,7 @@ import com.example.newdocsapp_backend.utils.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AuthService {
@@ -36,6 +38,8 @@ public class AuthService {
     private Long otpExpiration;
     @Value("${jwt.refresh.expiration}")
     private Long refreshTokenExpiration;
+
+    @Autowired
     public AuthService(UserRepository userRepository,
                        JwtUtil jwtUtil,
                        RefreshTokenRepository refreshTokenRepository,
@@ -89,6 +93,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(String email, String password) {
+        logger.info("Login request : {}", email);
         User user = userRepository.findByEmail(email);
         if (user == null || !passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new IllegalArgumentException("Invalid username or password.");

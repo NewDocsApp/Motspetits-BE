@@ -1,5 +1,7 @@
 package com.example.newdocsapp_backend.models;
 
+import com.example.newdocsapp_backend.converters.JsonNodeConverter;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -22,9 +24,10 @@ public class Document {
     @Column(name = "owner_id")
     private UUID owner;
 
+    @Convert(converter = JsonNodeConverter.class)
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    private String content;
+    private JsonNode content;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -33,7 +36,7 @@ public class Document {
 
     public Document() {}
 
-    public Document(String title, UUID owner, String content) {
+    public Document(String title, UUID owner, JsonNode content) {
         this.title = title;
         this.owner = owner;
         this.content = content;
@@ -59,10 +62,10 @@ public class Document {
         this.owner = owner;
     }
 
-    public String getContent() {
+    public JsonNode getContent() {
         return content;
     }
-    public void setContent(String content) {
+    public void setContent(JsonNode content) {
         this.content = content;
     }
 
@@ -78,5 +81,15 @@ public class Document {
     }
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

@@ -5,6 +5,7 @@ import com.example.newdocsapp_backend.models.Document;
 import com.example.newdocsapp_backend.models.Role;
 import com.example.newdocsapp_backend.service.DocumentService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +24,21 @@ public class DocumentController {
     }
 
     @PostMapping("/")
-    public Document createDocument(@RequestBody DocumentRequest documentRequest, HttpServletRequest request) {
+    public ResponseEntity<Document> createDocument(@RequestBody DocumentRequest documentRequest, HttpServletRequest request) {
         UUID ownerId = UUID.fromString((String) request.getAttribute("userId"));
-        return documentService.createDocument(documentRequest.getTitle(), ownerId, documentRequest.getContent());
+        Document newDoc = documentService.createDocument(documentRequest.getTitle(), ownerId, documentRequest.getContent());
 
+        return ResponseEntity.status(HttpStatus.CREATED).body(newDoc);
     }
 
     @GetMapping("/{id}")
     public Document getDocument(@PathVariable UUID id) {
         return documentService.getDocument(id);
+    }
+
+    @GetMapping("/")
+    public List<Document> getAllDocuments() {
+        return documentService.getAllDocument();
     }
 
     @GetMapping("/my-documents")

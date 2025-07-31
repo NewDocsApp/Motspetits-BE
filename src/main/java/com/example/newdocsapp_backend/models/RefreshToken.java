@@ -10,7 +10,7 @@ import java.util.Date;
 public class RefreshToken {
 
     @Id
-    @Column(name = "token")
+    @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
     @ManyToOne
@@ -45,7 +45,6 @@ public class RefreshToken {
     public Date getExpiryDate() {
         return expiryDate;
     }
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
-    }
+    public void setExpiryDate(Date expiryDate) {this.expiryDate = expiryDate;}
+
 }
