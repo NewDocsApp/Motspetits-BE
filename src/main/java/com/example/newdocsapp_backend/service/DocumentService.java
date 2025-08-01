@@ -3,19 +3,17 @@ package com.example.newdocsapp_backend.service;
 import com.example.newdocsapp_backend.models.Document;
 import com.example.newdocsapp_backend.models.DocumentCollaborator;
 import com.example.newdocsapp_backend.models.Role;
-import com.example.newdocsapp_backend.models.User;
 import com.example.newdocsapp_backend.repository.DocumentCollaboratorRepository;
 import com.example.newdocsapp_backend.repository.DocumentRepository;
 import com.example.newdocsapp_backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -37,7 +35,7 @@ public class DocumentService {
     public Document createDocument(String title, UUID owner, String content) {
         try {
             JsonNode jsonContent = objectMapper.readTree(content);
-            Document document = new Document(title, owner, jsonContent.toString());
+            Document document = new Document(title, owner, jsonContent);
             document.setCreatedAt(LocalDateTime.now());
             document = documentRepository.save(document);
             DocumentCollaborator collaborator = new DocumentCollaborator(document.getId(), owner, Role.editor);
@@ -75,7 +73,7 @@ public class DocumentService {
         try {
             JsonNode jsonContent = objectMapper.readTree(content);
             document.setTitle(title);
-            document.setContent(jsonContent.toString());
+            document.setContent(jsonContent);
             document.setUpdatedAt(LocalDateTime.now());
             return documentRepository.save(document);
         } catch (IOException e) {
@@ -83,6 +81,7 @@ public class DocumentService {
         }
     }
 
+    @Transactional
     public void deleteDocument(UUID documentId, UUID userId) {
         boolean isOwner = collaboratorRepository.existsByDocumentIdAndUserId(documentId, userId);
         if (!isOwner) {
@@ -93,6 +92,7 @@ public class DocumentService {
         if(!document.getOwner().equals(userId)) {
             throw new IllegalArgumentException("User not authorized to delete this document");
         }
+        collaboratorRepository.deleteByDocumentId(documentId);
         documentRepository.deleteById(documentId);
     }
 

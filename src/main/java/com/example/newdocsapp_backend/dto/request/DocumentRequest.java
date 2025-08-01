@@ -1,8 +1,5 @@
 package com.example.newdocsapp_backend.dto.request;
 
-import com.example.newdocsapp_backend.models.User;
-
-import java.util.UUID;
 
 public class DocumentRequest {
     private String title;
