@@ -67,9 +67,6 @@ public class DocumentService {
         }
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("Document not found: " + documentId));
-        if (!document.getOwner().equals(userId)) {
-            throw new IllegalArgumentException("User not authorized to update this document");
-        }
         try {
             JsonNode jsonContent = objectMapper.readTree(content);
             document.setTitle(title);
